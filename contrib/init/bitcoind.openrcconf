@@ -1,0 +1,33 @@
+# /etc/conf.d/polcoind: config file for /etc/init.d/polcoind
+
+# Config file location
+#polcoind_CONFIGFILE="/etc/bitcoin/bitcoin.conf"
+
+# What directory to write pidfile to?  (created and owned by $polcoind_USER)
+#polcoind_PIDDIR="/var/run/polcoind"
+
+# What filename to give the pidfile
+#polcoind_PIDFILE="${polcoind_PIDDIR}/polcoind.pid"
+
+# Where to write polcoind data (be mindful that the blockchain is large)
+#polcoind_DATADIR="/var/lib/polcoind"
+
+# User and group to own polcoind process
+#polcoind_USER="bitcoin"
+#polcoind_GROUP="bitcoin"
+
+# Path to polcoind executable
+#polcoind_BIN="/usr/bin/polcoind"
+
+# Nice value to run polcoind under
+#polcoind_NICE=0
+
+# Additional options (avoid -conf and -datadir, use flags above)
+polcoind_OPTS="-disablewallet"
+
+# The timeout in seconds OpenRC will wait for polcoind to terminate
+# after a SIGTERM has been raised.
+# Note that this will be mapped as argument to start-stop-daemon's
+# '--retry' option, which means you can specify a retry schedule
+# here. For more information see man 8 start-stop-daemon.
+polcoind_SIGTERM_TIMEOUT=60

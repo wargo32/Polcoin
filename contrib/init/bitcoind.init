@@ -1,0 +1,67 @@
+#!/bin/bash
+#
+#  polcoind The bitcoin core server.
+#
+#
+# chkconfig: 345 80 20
+# description: polcoind
+# processname: polcoind
+#
+
+# Source function library.
+. /etc/init.d/functions
+
+# you can override defaults in /etc/sysconfig/polcoind, see below
+if [ -f /etc/sysconfig/polcoind ]; then
+        . /etc/sysconfig/polcoind
+fi
+
+RETVAL=0
+
+prog=polcoind
+# you can override the lockfile via polcoind_LOCKFILE in /etc/sysconfig/polcoind
+lockfile=${polcoind_LOCKFILE-/var/lock/subsys/polcoind}
+
+# polcoind defaults to /usr/bin/polcoind, override with polcoind_BIN
+polcoind=${polcoind_BIN-/usr/bin/polcoind}
+
+# polcoind opts default to -disablewallet, override with polcoind_OPTS
+polcoind_opts=${polcoind_OPTS--disablewallet}
+
+start() {
+    echo -n $"Starting $prog: "
+    daemon $DAEMONOPTS $polcoind $polcoind_opts
+    RETVAL=$?
+    echo
+    [ $RETVAL -eq 0 ] && touch $lockfile
+    return $RETVAL
+}
+
+stop() {
+    echo -n $"Stopping $prog: "
+    killproc $prog
+    RETVAL=$?
+    echo
+    [ $RETVAL -eq 0 ] && rm -f $lockfile
+    return $RETVAL
+}
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    status)
+        status $prog
+        ;;
+    restart)
+        stop
+        start
+        ;;
+    *)
+        echo "Usage: service $prog {start|stop|status|restart}"
+        exit 1
+        ;;
+esac

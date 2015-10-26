@@ -1,0 +1,92 @@
+#!/sbin/runscript
+
+# backward compatibility for existing gentoo layout 
+#
+if [ -d "/var/lib/bitcoin/.bitcoin" ]; then
+	polcoind_DEFAULT_DATADIR="/var/lib/bitcoin/.bitcoin"
+else
+	polcoind_DEFAULT_DATADIR="/var/lib/polcoind"
+fi
+
+polcoind_CONFIGFILE=${polcoind_CONFIGFILE:-/etc/bitcoin/bitcoin.conf}
+polcoind_PIDDIR=${polcoind_PIDDIR:-/var/run/polcoind}
+polcoind_PIDFILE=${polcoind_PIDFILE:-${polcoind_PIDDIR}/polcoind.pid}
+polcoind_DATADIR=${polcoind_DATADIR:-${polcoind_DEFAULT_DATADIR}}
+polcoind_USER=${polcoind_USER:-${BITCOIN_USER:-bitcoin}}
+polcoind_GROUP=${polcoind_GROUP:-bitcoin}
+polcoind_BIN=${polcoind_BIN:-/usr/bin/polcoind}
+polcoind_NICE=${polcoind_NICE:-${NICELEVEL:-0}}
+polcoind_OPTS="${polcoind_OPTS:-${BITCOIN_OPTS}}"
+
+name="Bitcoin Core Daemon"
+description="Bitcoin cryptocurrency P2P network daemon"
+
+command="/usr/bin/polcoind"
+command_args="-pid=\"${polcoind_PIDFILE}\" \
+		-conf=\"${polcoind_CONFIGFILE}\" \
+		-datadir=\"${polcoind_DATADIR}\" \
+		-daemon \
+		${polcoind_OPTS}"
+
+required_files="${polcoind_CONFIGFILE}"
+start_stop_daemon_args="-u ${polcoind_USER} \
+			-N ${polcoind_NICE} -w 2000"
+pidfile="${polcoind_PIDFILE}"
+
+# The retry schedule to use when stopping the daemon. Could be either
+# a timeout in seconds or multiple signal/timeout pairs (like
+# "SIGKILL/180 SIGTERM/300")
+retry="${polcoind_SIGTERM_TIMEOUT}"
+
+depend() {
+	need localmount net
+}
+
+# verify
+# 1) that the datadir exists and is writable (or create it)
+# 2) that a directory for the pid exists and is writable
+# 3) ownership and permissions on the config file
+start_pre() {
+	checkpath \
+	-d \
+	--mode 0750 \
+	--owner "${polcoind_USER}:${polcoind_GROUP}" \
+	"${polcoind_DATADIR}"
+
+	checkpath \
+	-d \
+	--mode 0755 \
+	--owner "${polcoind_USER}:${polcoind_GROUP}" \
+	"${polcoind_PIDDIR}"
+
+	checkpath -f \
+	-o ${polcoind_USER}:${polcoind_GROUP} \
+	-m 0660 \
+	${polcoind_CONFIGFILE}
+
+	checkconfig || return 1
+}
+
+checkconfig()
+{
+	if ! grep -qs '^rpcpassword=' "${polcoind_CONFIGFILE}" ; then
+		eerror ""
+		eerror "ERROR: You must set a secure rpcpassword to run polcoind."
+		eerror "The setting must appear in ${polcoind_CONFIGFILE}"
+		eerror ""
+		eerror "This password is security critical to securing wallets "
+		eerror "and must not be the same as the rpcuser setting."
+		eerror "You can generate a suitable random password using the following"
+		eerror "command from the shell:"
+		eerror ""
+		eerror "bash -c 'tr -dc a-zA-Z0-9 < /dev/urandom | head -c32 && echo'"
+		eerror ""
+		eerror "It is also recommended that you also set alertnotify so you are "
+		eerror "notified of problems:"
+		eerror ""
+		eerror "ie: alertnotify=echo %%s | mail -s \"Bitcoin Alert\"" \
+			"admin@foo.com"
+		eerror ""
+		return 1
+	fi
+}
