@@ -3764,6 +3764,7 @@ void static ProcessGetData(CNode* pfrom)
             {
                 bool send = false;
                 BlockMap::iterator mi = mapBlockIndex.find(inv.hash);
+                pfrom->nBlocksRequested++;
                 if (mi != mapBlockIndex.end())
                 {
                     if (chainActive.Contains(mi->second)) {
