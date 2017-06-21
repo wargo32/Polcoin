@@ -95,8 +95,11 @@ public:
         assert(consensus.hashGenesisBlock == uint256S("0x5b0d84e63fa3dae7bb2ad21386ec5f6d146b70414bd825857636f91f4257d135"));
         assert(genesis.hashMerkleRoot == uint256S("0xea53d083b41896c5e5f6ca39223bd3a70a900868397a604c9d2f607c790c535d"));
 
+        vSeeds.push_back(CDNSSeedData("seed.polcoin.pl", "dnsseed.polcoin.pl"));
         vSeeds.push_back(CDNSSeedData("polcoin.pl", "polcoin.pl"));
-        vSeeds.push_back(CDNSSeedData("polcoin.one..pl", "polcoin.one.pl"));
+        vSeeds.push_back(CDNSSeedData("polcoin.one.pl", "polcoin.one.pl"));
+        vSeeds.push_back(CDNSSeedData("pdrobek.duckdns.org", "pdrobek.duckdns.org"));
+        vSeeds.push_back(CDNSSeedData("polcoin.duckdns.org", "polcoin.duckdns.org"));
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,0);
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,5);
@@ -139,10 +142,10 @@ public:
         consensus.nPowTargetTimespan = 0.25 * 24 * 60 * 60; // 6 hours
         consensus.nPowTargetSpacing = 60;
         consensus.fPowAllowMinDifficultyBlocks = true;
-        pchMessageStart[0] = 0x0b;
-        pchMessageStart[1] = 0x11;
-        pchMessageStart[2] = 0x09;
-        pchMessageStart[3] = 0x07;
+        pchMessageStart[0] = 0xa7;
+        pchMessageStart[1] = 0x74;
+        pchMessageStart[2] = 0x61;
+        pchMessageStart[3] = 0x84;
         vAlertPubKey = ParseHex("04302390343f91cc401d56d68b123028bf52e5fca1939df127f63c6467cdf9c8e2c14b61104cf817d0b780da337893ecc4aaff1309e536162dabbdb45200ca2b0a");
         nDefaultPort = 19338;
         nMaxTipAge = 0x7fffffff;
@@ -155,8 +158,12 @@ public:
 
         vFixedSeeds.clear();
         vSeeds.clear();
+
+        vSeeds.push_back(CDNSSeedData("seed.polcoin.pl", "dnsseed.polcoin.pl"));
         vSeeds.push_back(CDNSSeedData("polcoin.pl", "polcoin.pl"));
-        vSeeds.push_back(CDNSSeedData("polcoin.one..pl", "polcoin.one.pl"));
+        vSeeds.push_back(CDNSSeedData("polcoin.one.pl", "polcoin.one.pl"));
+        vSeeds.push_back(CDNSSeedData("pdrobek.duckdns.org", "pdrobek.duckdns.org"));
+        vSeeds.push_back(CDNSSeedData("polcoin.duckdns.org", "polcoin.duckdns.org"));
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,111);
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,196);
